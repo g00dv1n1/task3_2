@@ -5,64 +5,65 @@ const val VISA = "Visa"
 const val MIR = "Мир"
 
 fun main() {
-    val typeCard = MASTER
-    val sumLastMonthTransfer = 3_500_000
-    val sumTransfer = 1_600_000
+    val typeCard = VISA
+    val sumLastMonthTransfer = 50_000_000
+    val sumTransfer = 13_000
+    var result = ""
 
-    moneyTransfer(typeCard, sumLastMonthTransfer, sumTransfer)
+    when (typeCard) {
+        MASTER, MAESTRO -> result = comissionMaster(sumLastMonthTransfer, sumTransfer)
+        VISA, MIR -> result = comissionVisa(sumLastMonthTransfer, sumTransfer)
+        VKPAY -> result = comissionVK(sumLastMonthTransfer, sumTransfer)
+    }
+
+    println(result)
 
 }
 
-fun moneyTransfer(typeCard: String = VKPAY, sumLastMonthTransfer: Int = 0,sumTransfer: Int) {
+fun comissionMaster(sumLastMonthTransfer: Int, sumTransfer: Int) : String {
 
-    if (typeCard == MASTER || typeCard == MAESTRO) comissionMaster(sumLastMonthTransfer, sumTransfer)
-    else if (typeCard == VISA || typeCard == MIR) comissionVisa(sumLastMonthTransfer, sumTransfer)
-    else if (typeCard == VKPAY) comissionVK(sumLastMonthTransfer, sumTransfer)
-
-}
-
-fun comissionMaster(sumLastMonthTransfer: Int, sumTransfer: Int) {
-
-    when(limitCard(sumLastMonthTransfer, sumTransfer)) {
-        1 -> println("Превышен лимит отправки в месяц")
-        2-> println("Превышен дневной лимит отправки")
-        0-> if (sumLastMonthTransfer > 7_500_000) println("Комиссия составит: 0 копеек." )
-        else println("Комиссия составит: " + sumTransfer / 100 * 0.6 + 2000 + " копеек." )
+    return when(limitCard(sumLastMonthTransfer, sumTransfer)) {
+        1-> "Превышен лимит отправки в месяц"
+        2-> "Превышен дневной лимит отправки"
+        0-> if (sumLastMonthTransfer < 7_500_000) "Комиссия составит: 0 копеек."
+        else "Комиссия составит: " + sumTransfer / 100 * 0.6 + 2000 + " копеек."
+        else -> ""
     }
 }
 
-fun comissionVisa(sumLastMonthTransfer: Int, sumTransfer: Int) {
+fun comissionVisa(sumLastMonthTransfer: Int, sumTransfer: Int) : String {
 
     var comission = sumTransfer / 100 * 0.75
+    if (comission < 3500) comission = 3500.0
 
-    when(limitCard(sumLastMonthTransfer, sumTransfer)) {
-        1 -> println("Превышен лимит отправки в месяц")
-        2-> println("Превышен дневной лимит отправки")
-        0-> if (sumTransfer < 3500) comission = 3500.0
+    return when(limitCard(sumLastMonthTransfer, sumTransfer)) {
+        1-> "Превышен лимит отправки в месяц"
+        2-> "Превышен дневной лимит отправки"
+        0-> "Комиссия составит: " + comission + " копеек."
+        else -> ""
     }
-
-    println("Комиссия составит: " + comission + " копеек.")
 }
 
-fun comissionVK(sumLastMonthTransfer: Int, sumTransfer: Int) {
+fun comissionVK(sumLastMonthTransfer: Int, sumTransfer: Int) : String {
 
-    when(limitVK(sumLastMonthTransfer, sumTransfer)) {
-        1 -> println("Превышен лимит отправки в месяц")
-        2-> println("Превышен дневной лимит отправки")
-        0-> println("Комиссия составит: 0 копеек.")
+    return when(limitVK(sumLastMonthTransfer, sumTransfer)) {
+        1-> "Превышен лимит отправки в месяц"
+        2-> "Превышен дневной лимит отправки"
+        0-> "Комиссия составит: 0 копеек."
+        else -> ""
     }
 }
 
 fun limitCard(sumLastMonthTransfer: Int, sumTransfer: Int) : Int {
 
     return if (sumLastMonthTransfer > 60_000_000) 1
-    else if (sumTransfer > 15_000_000) 2
-    else 0
+    else return if (sumTransfer > 15_000_000) 2
+    else return 0
 
 }
 
 fun limitVK(sumLastMonthTransfer: Int, sumTransfer: Int) : Int {
     return if (sumLastMonthTransfer > 4_000_000) 1
-    else if (sumTransfer > 1_500_000) 2
-    else 0
+    else return if (sumTransfer > 1_500_000) 2
+    else return 0
 }
