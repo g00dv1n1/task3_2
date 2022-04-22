@@ -55,7 +55,7 @@ class MainKtTest {
     @Test
     fun comissionVisaMounthLimit() {
 
-        val sumLastMonthTransfer = 1_000_000
+        val sumLastMonthTransfer = 61_000_000
         val sumTransfer = 1_600_000
         val expectedText = "Превышен лимит отправки в месяц"
 
@@ -80,7 +80,7 @@ class MainKtTest {
     fun comissionVisaFullComission() {
 
         val sumLastMonthTransfer = 50_000_000
-        val sumTransfer = 23_000_000
+        val sumTransfer = 13_000_000
         val expectedText = "Комиссия составит: 97500.0 копеек."
 
         val actualText = comissionVisa(sumLastMonthTransfer, sumTransfer)
